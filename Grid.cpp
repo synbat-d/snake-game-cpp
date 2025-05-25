@@ -116,9 +116,7 @@ bool Grid::detectEatingFood() {
 
 void Grid::updateGrid(Worm::Direction newDirection) {
     this->worm->turn(newDirection);
-    if (detectCollision()) {
-        std::cout << "GAME OVER" << std::endl;
-    }
+    detectCollision();
     if (detectEatingFood()) {
         this->worm->grow();
         if (!this->collision) {
@@ -129,7 +127,6 @@ void Grid::updateGrid(Worm::Direction newDirection) {
         this->worm->move();
     }
     printGrid();
-    std::cout << std::endl;
 }
 
 void Grid::updateGrid() {
@@ -141,9 +138,10 @@ void Grid::startGrid() {
     this->collision = false;
     this->food = Food(-1, -1);
     this->collisionPlace = Food(-1, -1);
+    delete this->worm;
+    this->worm = new Worm(5,5);
     appearRandomFood();
     printGrid();
-    std::cout << std::endl;
 }
 
 
@@ -158,6 +156,9 @@ void Grid::indicateCollision(int x, int y) {
 void Grid::printGrid() {
     std::cout << std::endl;
     std::cout << std::endl;
+    if (this->collision) {
+        std::cout << "GAME OVER Your Score is " << this->worm->getsize() <<  std::endl;
+    }
     std::string spaces = "";
     for (int i = 0; i < this->horizontalSpacesNumber-1; i++) {
         spaces += " ";
@@ -170,7 +171,9 @@ void Grid::printGrid() {
     std::vector<std::vector<std::string>> grid(height, std::vector<std::string>(width, freeSpace));
     WormPart *temp = this->worm->getHead();
     while (temp != nullptr) {
-        grid[temp->y][temp->x] = wormPartString;
+        if (temp->x >= 0 && temp->x < width && temp->y >= 0 && temp->y < height) {
+            grid[temp->y][temp->x] = wormPartString;
+        }
         temp = temp->next;
     }
     grid[this->food.y][this->food.x] = wormFoodString;
@@ -180,6 +183,7 @@ void Grid::printGrid() {
     for (int i=0; i<width+2; i++) {
         std::cout << wallString;
     }
+    std::cout << "Score: " << this->worm->getsize();
     std::cout << '\n';
     for (int i=height-1; i>=0; i--) {
         std::cout << wallString;

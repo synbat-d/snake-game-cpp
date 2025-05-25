@@ -13,6 +13,16 @@ Worm::Worm(int startX, int startY) {
     this->direction = Worm::Direction::RIGHT;
 }
 
+Worm::~Worm() {
+    // Clean up all parts
+    WormPart* current = head;
+    while (current != nullptr) {
+        WormPart* temp = current;
+        current = current->next;
+        delete temp;
+    }
+}
+
 void Worm::move() {
     addPartToFront();
     removeTail();

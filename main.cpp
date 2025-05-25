@@ -1,9 +1,27 @@
 #include <iostream>
-#include "WormPart.h"
-#include "Food.h"
-#include "Grid.h"
 #include <conio.h>
 #include <windows.h>
+#include <cctype>
+
+#include "Grid.h"
+
+bool waitForStart() {
+    std::cout << "Start game? (Y/N): ";
+    while (true) {
+        char input = _getch();  // instantly gets keypress
+        input = std::toupper(input);  // make case-insensitive
+
+        if (input == 'Y') {
+            std::cout << "Starting game...\n";
+            return true;
+        } else if (input == 'N') {
+            std::cout << "Exiting...\n";
+            return false;
+        } else {
+            std::cout << "\nInvalid input. Please press Y or N: ";
+        }
+    }
+}
 
 Worm::Direction getInputOrDefault(Worm::Direction currentDirection) {
     if (_kbhit()) {
@@ -37,19 +55,21 @@ Worm::Direction getInputOrDefault(Worm::Direction currentDirection) {
 int main() {
     Worm* worm = new Worm(5,5);
     Grid* grid = new Grid(worm);
-    grid->startGrid();
-    while (true) {
-        Worm::Direction someDir = getInputOrDefault(worm->getDirection());
-        grid->updateGrid(someDir);
-        if (grid->collision) {
-            std::cout << "Collision detected Game Over" << std::endl;
-            break;
-        }// prints the updated grid, moves worm
-        Sleep(500);
+
+    while (waitForStart()) {
+        grid->startGrid();
+        while (true) {
+            Worm::Direction someDir = getInputOrDefault(worm->getDirection());
+            grid->updateGrid(someDir);
+            if (grid->collision) {
+                std::cout << "Collision detected Game Over" << std::endl;
+                break;
+            }// prints the updated grid, moves worm
+            Sleep(500);
+        }
     }
-    delete worm;
+    delete grid->worm;
     delete grid;
     Sleep(5000);
     return 0;
-
 }

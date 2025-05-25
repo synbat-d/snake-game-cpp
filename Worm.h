@@ -9,11 +9,14 @@
 
 class Worm {
 public:
+    WormPart* head;
     enum Direction {
         UP, RIGHT, DOWN, LEFT
     };
+    Direction direction;
 
     Worm(int startX, int startY);
+    ~Worm();
 
     void move();
     void grow();
@@ -24,9 +27,7 @@ public:
     Direction getDirection() const;
 
 private:
-    WormPart* head;
     int size;
-    Direction direction;
 
     void addPartToFront();
     void removeTail();
