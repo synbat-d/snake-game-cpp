@@ -2,21 +2,54 @@
 #include "WormPart.h"
 #include "Food.h"
 #include "Grid.h"
+#include <conio.h>
+#include <windows.h>
+
+Worm::Direction getInputOrDefault(Worm::Direction currentDirection) {
+    if (_kbhit()) {
+        char ch = _getch(); // get character input (does not wait)
+        switch (ch) {
+            case 'w':
+            case 'W':
+                if (currentDirection != Worm::DOWN)
+                    return Worm::UP;
+                break;
+            case 's':
+            case 'S':
+                if (currentDirection != Worm::UP)
+                    return Worm::DOWN;
+                break;
+            case 'a':
+            case 'A':
+                if (currentDirection != Worm::RIGHT)
+                    return Worm::LEFT;
+                break;
+            case 'd':
+            case 'D':
+                if (currentDirection != Worm::LEFT)
+                    return Worm::RIGHT;
+                break;
+        }
+    }
+    return currentDirection; // default to previous if no input or invalid
+}
 
 int main() {
-    Grid grid(20,20, 'O', '#', 3);
-    WormPart head(3,3);
-    WormPart body1(4,3);
-    WormPart body2(5,3);
-    WormPart body3(6,3);
-    WormPart body4(6,4);
-    WormPart body5(6,5);
-    WormPart body6(6,6);
-    head.next=&body1;
-    body1.next=&body2;
-    body2.next=&body3;
-    body3.next=&body4;
-    body4.next=&body5;
-    body5.next=&body6;
-    grid.printGrid(&head);
+    Worm* worm = new Worm(5,5);
+    Grid* grid = new Grid(worm);
+    grid->startGrid();
+    while (true) {
+        Worm::Direction someDir = getInputOrDefault(worm->getDirection());
+        grid->updateGrid(someDir);
+        if (grid->collision) {
+            std::cout << "Collision detected Game Over" << std::endl;
+            break;
+        }// prints the updated grid, moves worm
+        Sleep(500);
+    }
+    delete worm;
+    delete grid;
+    Sleep(5000);
+    return 0;
+
 }

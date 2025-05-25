@@ -15,7 +15,11 @@ public:
     bool collision;
 
     Grid(int width, int height, char wormPart, char wall, int horizontalSpacesNumber, Worm* worm);
+    Grid(Worm* worm);
     void printGrid();
+    void updateGrid(Worm::Direction newDirection);
+    void startGrid();
+    void updateGrid();
 private:
     int width;
     int height;
@@ -23,10 +27,12 @@ private:
     char wall;
     int horizontalSpacesNumber;
     Food food;
+    Food collisionPlace;
 
     void appearRandomFood();
-    void detectCollision();
-    void detectEatingFood();
+    bool detectCollision();
+    bool detectEatingFood();
+    void indicateCollision(int x, int y);
 };
 
 
